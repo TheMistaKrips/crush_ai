@@ -6,6 +6,9 @@ import Showcase from './components/Showcase';
 import Footer from './components/Footer';
 import WaitlistModal from './components/WaitlistModal';
 
+// ПРАВИЛЬНЫЙ ИМПОРТ ДЛЯ VITE (РЕАКТА)
+import { Analytics } from "@vercel/analytics/react"
+
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -40,12 +43,11 @@ export default function App() {
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-          color: #f8fafc; /* Светлый текст */
-          background-color: #0b0e14; /* Глубокий темный фон */
+          color: #f8fafc;
+          background-color: #0b0e14;
           overflow-x: hidden;
         }
 
-        /* Глобальные классы для плавного появления */
         .reveal {
           opacity: 0;
           transform: translateY(40px);
@@ -61,7 +63,6 @@ export default function App() {
           overflow: hidden;
         }
 
-        /* Общий контейнер, чтобы всё железно было по центру */
         .section-container {
           width: 100%;
           max-width: 1200px;
@@ -76,7 +77,6 @@ export default function App() {
 
       <Navbar onOpenModal={() => setIsModalOpen(true)} />
 
-      {/* Обертка main, центрирующая все секции */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
         <Hero onOpenModal={() => setIsModalOpen(true)} />
         <Features />
@@ -86,6 +86,9 @@ export default function App() {
       <Footer />
 
       {isModalOpen && <WaitlistModal onClose={() => setIsModalOpen(false)} />}
+
+      {/* Аналитика невидима, поэтому пусть живет в самом конце DOM-дерева */}
+      <Analytics />
     </div>
   );
 }
