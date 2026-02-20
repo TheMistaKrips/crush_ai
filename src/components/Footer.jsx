@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ContactModal from './ContactModal';
+import EducationModal from './EducationModal'; // Добавлен импорт нового окна
 
 export default function Footer() {
   const footerRef = useRef(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isEducationModalOpen, setIsEducationModalOpen] = useState(false); // Состояние нового окна
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -146,6 +148,7 @@ export default function Footer() {
           display: flex;
           align-items: center;
           gap: 24px;
+          flex-wrap: wrap; /* Добавлено, чтобы кнопки не слипались на узких экранах */
         }
 
         .contact-button {
@@ -166,6 +169,27 @@ export default function Footer() {
         .contact-button:hover {
           transform: translateY(-2px);
           box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Стиль для новой кнопки образования */
+        .education-button {
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .education-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -190,6 +214,7 @@ export default function Footer() {
           .footer-bottom-left {
             flex-direction: column;
             gap: 12px;
+            justify-content: center;
           }
         }
       `}</style>
@@ -240,6 +265,15 @@ export default function Footer() {
               >
                 Contact Developer
               </button>
+
+              {/* Новая кнопка вызова образовательной модалки */}
+              <button
+                className="education-button"
+                onClick={() => setIsEducationModalOpen(true)}
+              >
+                Для Образования
+              </button>
+
             </div>
           </div>
 
@@ -248,6 +282,11 @@ export default function Footer() {
 
       {isContactModalOpen && (
         <ContactModal onClose={() => setIsContactModalOpen(false)} />
+      )}
+
+      {/* Вызов новой модалки */}
+      {isEducationModalOpen && (
+        <EducationModal onClose={() => setIsEducationModalOpen(false)} />
       )}
     </>
   );
