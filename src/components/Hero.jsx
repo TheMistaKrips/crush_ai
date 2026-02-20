@@ -16,12 +16,23 @@ const generateParticles = () => {
   }));
 };
 
-// Компонент для печатающегося текста
+// Компонент для печатающегося текста с адаптацией под мобильные
 const TypingText = ({ texts, speed = 100, pauseDuration = 2000 }) => {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [textIndex, setTextIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     let timeout;
@@ -29,16 +40,13 @@ const TypingText = ({ texts, speed = 100, pauseDuration = 2000 }) => {
     const currentFullText = texts[textIndex];
 
     if (!isDeleting && displayText === currentFullText) {
-      // Пауза после завершения печати
       timeout = setTimeout(() => {
         setIsDeleting(true);
       }, pauseDuration);
     } else if (isDeleting && displayText === '') {
-      // Переход к следующему тексту
       setIsDeleting(false);
       setTextIndex((prev) => (prev + 1) % texts.length);
     } else {
-      // Печать или удаление
       const nextIndex = isDeleting ? displayText.length - 1 : displayText.length + 1;
 
       timeout = setTimeout(() => {
@@ -50,7 +58,12 @@ const TypingText = ({ texts, speed = 100, pauseDuration = 2000 }) => {
     return () => clearTimeout(timeout);
   }, [displayText, isDeleting, textIndex, texts, speed, pauseDuration]);
 
-  return <span className="typing-text">{displayText}<span className="cursor">|</span></span>;
+  return (
+    <span className={`typing-text ${isMobile ? 'mobile' : ''}`}>
+      {displayText}
+      <span className="cursor">|</span>
+    </span>
+  );
 };
 
 // Компонент для перемещаемых нод
@@ -97,7 +110,6 @@ const DraggableNode = ({ node, onDrag, onDragStart, onDragEnd, onConnect, connec
       const newX = e.clientX - dragOffset.x;
       const newY = e.clientY - dragOffset.y;
 
-      // Ограничиваем перемещение в пределах контейнера
       const container = document.querySelector('.nodes-container');
       if (container) {
         const containerRect = container.getBoundingClientRect();
@@ -169,7 +181,6 @@ export default function Hero({ onOpenModal }) {
   const [draggedNode, setDraggedNode] = useState(null);
   const containerRef = useRef(null);
 
-  // Тексты для печати
   const typingTexts = [
     "next-generation IDE",
     "visual development",
@@ -177,7 +188,6 @@ export default function Hero({ onOpenModal }) {
     "instant deployment"
   ];
 
-  // Инициализация нод
   useEffect(() => {
     const initialNodes = [
       {
@@ -234,7 +244,6 @@ export default function Hero({ onOpenModal }) {
       node.id === nodeId ? { ...node, x, y } : node
     ));
 
-    // Обновляем временное соединение
     if (connectingFrom === nodeId && tempConnection) {
       setTempConnection(prev => ({
         ...prev,
@@ -266,7 +275,6 @@ export default function Hero({ onOpenModal }) {
         endY: position.y
       });
     } else if (type === 'end' && connectingFrom && connectingFrom !== nodeId) {
-      // Создаем соединение
       setConnections(prev => [...prev, {
         id: `${connectingFrom}-${nodeId}-${Date.now()}`,
         from: connectingFrom,
@@ -277,7 +285,6 @@ export default function Hero({ onOpenModal }) {
     }
   }, [connectingFrom]);
 
-  // Отмена соединения при клике вне нод
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.node') && connectingFrom) {
@@ -290,7 +297,6 @@ export default function Hero({ onOpenModal }) {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [connectingFrom]);
 
-  // Обновление временного соединения при движении мыши
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (connectingFrom && !draggedNode && tempConnection) {
@@ -347,7 +353,7 @@ export default function Hero({ onOpenModal }) {
                     100% { transform: translate(40px, -60px) rotate(var(--angle)); opacity: 0; }
                 }
 
-                /* Контейнер для нод */
+                /* Контейнер для нод - скрыт на мобильных */
                 .nodes-container {
                     position: absolute;
                     top: 0;
@@ -357,6 +363,16 @@ export default function Hero({ onOpenModal }) {
                     pointer-events: all;
                     z-index: 20;
                     overflow: hidden;
+                }
+
+                /* Скрываем ноды и соединения на мобильных устройствах */
+                @media (max-width: 768px) {
+                    .nodes-container,
+                    .connections-canvas,
+                    .node,
+                    .clear-button {
+                        display: none !important;
+                    }
                 }
 
                 /* Canvas для соединений */
@@ -523,6 +539,17 @@ export default function Hero({ onOpenModal }) {
                     text-align: left;
                 }
 
+                /* Адаптация для мобильных */
+                .typing-text.mobile {
+                    min-width: auto;
+                    width: 100%;
+                    text-align: center;
+                    font-size: 28px;
+                    line-height: 1.2;
+                    white-space: normal;
+                    word-break: break-word;
+                }
+
                 .cursor {
                     display: inline-block;
                     width: 4px;
@@ -593,20 +620,49 @@ export default function Hero({ onOpenModal }) {
                 }
                 
                 @media (max-width: 768px) {
-                    .hero-title { font-size: 48px; }
-                    .hero-subtitle { font-size: 18px; }
-                    .hero-buttons { flex-direction: column; width: 100%; }
-                    .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
-                    
-                    .node {
-                        width: 150px;
-                        padding: 8px;
+                    .hero-section {
+                        padding: 100px 16px 40px;
                     }
                     
-                    .node-connector {
-                        width: 20px;
-                        height: 20px;
-                        right: -6px;
+                    .hero-title { 
+                        font-size: 42px;
+                        line-height: 1.1;
+                        margin-bottom: 16px;
+                    }
+                    
+                    .hero-subtitle { 
+                        font-size: 16px; 
+                        line-height: 1.5;
+                        margin-bottom: 32px;
+                        padding: 0 8px;
+                    }
+                    
+                    .hero-buttons { 
+                        flex-direction: column; 
+                        width: 100%; 
+                        max-width: 320px;
+                        gap: 12px;
+                    }
+                    
+                    .btn-primary, .btn-secondary { 
+                        width: 100%; 
+                        justify-content: center;
+                        padding: 14px 24px;
+                        font-size: 15px;
+                    }
+                    
+                    .hero-badge {
+                        font-size: 12px;
+                        padding: 4px 12px;
+                        margin-bottom: 24px;
+                    }
+                    
+                    .title-line {
+                        display: inline;
+                    }
+                    
+                    .title-line-1 {
+                        margin-bottom: 8px;
                     }
                 }
             `}</style>
@@ -630,7 +686,6 @@ export default function Hero({ onOpenModal }) {
         </div>
 
         <div ref={containerRef} className="nodes-container">
-          {/* Рисуем соединения */}
           <svg className="connections-canvas">
             {connections.map(conn => {
               const fromNode = nodes.find(n => n.id === conn.from);
@@ -660,7 +715,6 @@ export default function Hero({ onOpenModal }) {
             )}
           </svg>
 
-          {/* Рендерим ноды */}
           {nodes.map(node => (
             <DraggableNode
               key={node.id}
