@@ -271,7 +271,7 @@ export default function Footer() {
                 className="education-button"
                 onClick={() => setIsEducationModalOpen(true)}
               >
-                Для Образования
+                For Education
               </button>
 
             </div>
