@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import WaitlistModal from './components/WaitlistModal';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 
 import { Analytics } from "@vercel/analytics/react";
 
@@ -81,6 +82,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home onOpenModal={() => setIsModalOpen(true)} />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
         </Routes>
 
         <Footer />

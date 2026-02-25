@@ -1,10 +1,11 @@
 // src/pages/Blog.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Blog() {
     const dummyPosts = [
         {
-            id: 1,
+            id: "first-post", // Указываем имя файла без .md
             tag: "Engineering",
             date: "Oct 24, 2023",
             title: "How I forced AI to write Vanilla CSS instead of Tailwind",
@@ -12,7 +13,7 @@ export default function Blog() {
             readTime: "5 min read"
         },
         {
-            id: 2,
+            id: "visual-nodes",
             tag: "Product",
             date: "Oct 18, 2023",
             title: "Visual Node Architecture: The Future of IDEs",
@@ -20,7 +21,7 @@ export default function Blog() {
             readTime: "4 min read"
         },
         {
-            id: 3,
+            id: "fastapi-react",
             tag: "Tutorial",
             date: "Oct 12, 2023",
             title: "Connecting FastAPI and React with Zero Code",
@@ -81,13 +82,18 @@ export default function Blog() {
                     width: '100%'
                 }}>
                     {dummyPosts.map(post => (
-                        <article key={post.id} className="bento-card" style={{
-                            cursor: 'pointer',
-                            padding: '32px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            minHeight: '320px'
-                        }}>
+                        <Link
+                            to={`/blog/${post.id}`}
+                            key={post.id}
+                            className="bento-card"
+                            style={{
+                                textDecoration: 'none',
+                                padding: '32px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                minHeight: '320px'
+                            }}
+                        >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                 <span style={{
                                     fontSize: '12px',
@@ -131,14 +137,14 @@ export default function Blog() {
                                 paddingTop: '20px',
                                 borderTop: '1px solid rgba(255,255,255,0.05)'
                             }}>
-                                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>
+                                <span style={{ fontSize: '13px', color: '#60a5fa', fontWeight: 500 }}>
                                     Read Article →
                                 </span>
                                 <span style={{ fontSize: '12px', color: '#475569' }}>
                                     {post.readTime}
                                 </span>
                             </div>
-                        </article>
+                        </Link>
                     ))}
                 </div>
 
