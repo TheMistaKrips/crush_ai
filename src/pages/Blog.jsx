@@ -1,6 +1,7 @@
 // src/pages/Blog.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 export default function Blog() {
     const dummyPosts = [
@@ -42,6 +43,11 @@ export default function Blog() {
             position: 'relative',
             zIndex: 10
         }}>
+            <SEO
+                title="Developer Blog"
+                description="Engineering insights, tutorials, and product updates from the creators of CRUSH AI."
+                url="/blog"
+            />
             <div className="section-container" style={{ padding: '0 20px' }}>
 
                 {/* Шапка блога */}
