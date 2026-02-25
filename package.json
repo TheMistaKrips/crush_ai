@@ -30,6 +30,7 @@
     "vite": "^7.3.1"
   },
   "reactSnap": {
+    "source": "dist",
     "include": [
       "/",
       "/blog"
